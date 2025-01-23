@@ -8,3 +8,4 @@ Implements the following commands:
   - The program requires a `template.svg` file to be in your `~/.config/inkscape-figure-manager` directory.
   - If I ever write an installation script, it will make this directory and copy a default template to the directory.
 - `--edit [path]`: Lists all `.svg` files in the `path` directory and lists them in a rofi menu. Opens the selected file for editing.
+- `--daemon [kill]` **WORK IN PROGRESS** Running this command without the `kill` parameter starts the daemon, which watches for all instances of inkscape opening as a cause of this script and exits inkscape when the file is saved. Including the `kill` parameter kills the daemon.
