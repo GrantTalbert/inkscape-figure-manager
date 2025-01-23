@@ -1,6 +1,6 @@
 # Inkscape Figure Manager
 
-A manager for inserting and editing inkscape figures inside a vim workflow.
+A manager for inserting and editing inkscape figures inside a vim workflow. **This project is designed for Linux systems, and likely will not work on MacOS, Windows, and other operating systems.**
 
 Implements the following commands:
 - `--insert [path]`: Looks for all files with the `pdf_tex` extension at the directory `path`, and lists them all in a rofi prompt. Once the user selects a figure, it returns the necessay code to insert it into a LaTeX documnet.

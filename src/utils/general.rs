@@ -1,5 +1,6 @@
 //! General utility functions
 use std::fs;
+use std::fs::OpenOptions;
 use std::path::PathBuf;
 use std::process::{exit, Command};
 use dirs::home_dir;
@@ -7,7 +8,7 @@ use dirs::home_dir;
 /// Returns the template file
 /// The template file is saved at ~/.config/inkscape-figure-manager/template.svg
 pub fn get_template_file() -> PathBuf {
-    let home = home_dir();
+    let home = home_dir().expect("Failed to get your home directory");
     let config_path = home.unwrap().join(".config")
         .join("inkscape-figure-manager")
         .join("template.svg");
@@ -19,8 +20,8 @@ pub fn get_template_file() -> PathBuf {
 pub fn get_latex_code(selected_file: &str) -> String {
     ["\\begin{figure}[ht]",
         "    \\centering",
-        format!("    \\incfig{}{}{}", "{", selected_file, "}").as_str(),
-        format!("    \\caption{}{}{}\\label{}{}{}", "{", selected_file, "}", "{fig:", selected_file, "}").as_str(),
+        format!("    \\incfig{{{}}}", selected_file).as_str(),
+        format!("    \\caption{{{}}}\\label{{fig:{}}}", selected_file, selected_file).as_str(),
         "\\end{figure}"
     ].join("\n")
 }
@@ -45,12 +46,20 @@ pub fn parse_dir_for_extension(extension: &str, directory: &PathBuf) -> Vec<Stri
 /// Attempts to open a file at the given path in inkscape
 pub fn open_file(path: PathBuf){
     let open_command = Command::new("inkscape")
-        .arg(path.to_str().unwrap())
+        .arg(path.to_string_lossy().as_ref())
         .status()
         .expect("Failed to open inkscape");
 
     if !open_command.success() {
         eprintln!("Failed to open inkscape");
         exit(1);
+    }
+}
+
+pub fn communicate_daemon(path: PathBuf){
+    if let Ok(mut file) = OpenOptions::new().append(true).create(true).open("/tmp/inkscape_figure_manager_ipc") {
+        writeln!(file, "open {}", path.display()).expect("Failed to write to IPC file");
+    } else {
+        eprintln!("Failed to communicate with daemon");
     }
 }

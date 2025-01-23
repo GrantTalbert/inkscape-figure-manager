@@ -1,5 +1,6 @@
 mod commands;
 mod utils;
+mod daemon;
 
 use std::path::PathBuf;
 use clap::{Parser, Subcommand};
@@ -42,6 +43,11 @@ enum Commands {
     Edit {
         path: PathBuf
     },
+
+    #[command(name = "--daemon")]
+    Daemon {
+        option: String,
+    },
 }
 
 fn main() {
@@ -60,6 +66,20 @@ fn main() {
         }
         Commands::Edit { path } => {
             println!("{}", edit(path));
+        }
+        Commands::Daemon { option }=> {
+            match option.as_str() {
+                "kill" => {
+                    daemon::daemon::kill_daemon()
+                }
+                _ => {
+                    std::process::Command::new(std::env::current_exe().unwrap())
+                        .arg("--daemon start")
+                        .spawn()
+                        .expect("Could not start daemon");
+                    println!("Daemon started");
+                }
+            }
         }
     }
 }
