@@ -4,6 +4,7 @@ mod utils;
 use std::path::PathBuf;
 use clap::{Parser, Subcommand};
 use crate::commands::create::create;
+use crate::commands::edit::edit;
 use crate::commands::insert::insert;
 
 #[derive(Parser)]
@@ -35,7 +36,12 @@ enum Commands {
     #[command(name = "--insert")]
     Insert {
         path: PathBuf
-    }
+    },
+
+    #[command(name = "--edit")]
+    Edit {
+        path: PathBuf
+    },
 }
 
 fn main() {
@@ -50,7 +56,10 @@ fn main() {
             create(title, path);
         }
         Commands::Insert { path } => {
-            insert(path);
+            println!("{}", insert(path));
+        }
+        Commands::Edit { path } => {
+            println!("{}", edit(path));
         }
     }
 }

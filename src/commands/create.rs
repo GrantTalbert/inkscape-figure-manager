@@ -1,7 +1,6 @@
-use std::fmt::format;
 use std::path::PathBuf;
 use std::process::{Command, exit};
-use crate::utils::general::get_template_file;
+use crate::utils::general::{get_template_file, open_file};
 
 pub fn create(title: String, path: PathBuf) {
     let target_file = path.join(format!("{}.svg", title));
@@ -27,13 +26,5 @@ pub fn create(title: String, path: PathBuf) {
 
     println!("File {} created successfully", format!("{}/{}.svg", path.display(), title));
 
-    let open_command = Command::new("inkscape")
-        .arg(target_file.to_str().unwrap())
-        .status()
-        .expect("Failed to open inkscape");
-
-    if !open_command.success() {
-        eprintln!("Failed to open inkscape");
-        exit(1);
-    }
+    open_file(target_file);
 }
