@@ -1,9 +1,9 @@
 //! General utility functions
 use std::fs;
 use std::fs::OpenOptions;
-use std::io::{BufWriter, Read, Write};
+use std::io::{BufWriter, Write};
 use std::path::PathBuf;
-use std::process::{exit, Command};
+use std::process::{Command};
 use dirs::home_dir;
 
 /// Returns the template file
@@ -62,15 +62,10 @@ pub fn communicate_daemon(mut path: PathBuf, status: &str){
             if path.extension().is_none() {
                 path.set_extension("svg");
             }
-            if let Err(err) = writeln!(writer, "{} {}", path.display(), status) {}
+            if let Err(_err) = writeln!(writer, "{} {}", path.display(), status) {}
         }
-        Err(err) => {},
+        Err(_err) => {},
     }
-}
-
-pub fn remove_from_ipc(mut path: PathBuf){
-    println!("Removing from inkscape IPC file: {}", path.display());
-    OpenOptions::new().write(true).truncate(true).open("/tmp/inkscape_figure_manager_ipc").expect("Something borke owo");
 }
 
 pub fn close_inkscape() {

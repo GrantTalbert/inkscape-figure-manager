@@ -1,6 +1,5 @@
 use std::fs;
 use std::path::PathBuf;
-use std::process::{Command, exit};
 use crate::utils::general::{communicate_daemon, get_latex_code, get_template_file, open_file};
 
 pub fn create(title: String, path: PathBuf) {

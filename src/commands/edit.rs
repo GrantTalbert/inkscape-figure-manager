@@ -1,5 +1,5 @@
 use std::path::PathBuf;
-use crate::utils::general::{communicate_daemon, get_latex_code, open_file, parse_dir_for_extension};
+use crate::utils::general::{communicate_daemon, open_file, parse_dir_for_extension};
 use crate::utils::rofi::rofi::rofi;
 
 pub fn edit(directory: PathBuf) {

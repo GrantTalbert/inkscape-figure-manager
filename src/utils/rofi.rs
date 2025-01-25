@@ -1,5 +1,5 @@
 pub mod rofi {
-    use std::io::{stdin, BufReader, Write};
+    use std::io::{Write};
     use std::process::{Command, Stdio};
 
     pub fn rofi(commands: &[&str]) -> String {

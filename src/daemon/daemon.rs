@@ -2,18 +2,16 @@ use std::collections::{HashMap, HashSet};
 use std::fs::{File, OpenOptions};
 use std::io::Read;
 use std::path::{Path, PathBuf};
-use std::sync::{Arc, Mutex, mpsc};
+use std::sync::{Arc, Mutex};
 use std::process::Command;
 use std::time::{Duration, Instant};
-use clap::builder::PathBufValueParser;
-use notify::{recommended_watcher, Event, RecommendedWatcher, RecursiveMode, Watcher};
-use crate::utils::general::{close_inkscape, communicate_daemon, remove_from_ipc};
+use notify::{Event, RecommendedWatcher, RecursiveMode, Watcher};
+use crate::utils::general::{close_inkscape, communicate_daemon};
 
 static IPC_FILE: &str = "/tmp/inkscape_figure_manager_ipc";
 const DEBOUNCE_DURATION: Duration = Duration::from_millis(300);
 pub fn start_daemon() {
     let watched_files: Arc<Mutex<HashSet<PathBuf>>> = Arc::new(Mutex::new(HashSet::new()));
-    let watched_files_clone = Arc::clone(&watched_files);
     let first_events: Arc<Mutex<HashSet<PathBuf>>> = Arc::new(Mutex::new(HashSet::new()));
     let first_events_clone = Arc::clone(&first_events);
     let last_update_time: Arc<Mutex<HashMap<PathBuf, Instant>>> = Arc::new(Mutex::new(HashMap::new()));
