@@ -22,10 +22,6 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    // Starts the daemon
-    #[command(name = "--watch")]
-    Watch,
-
     // Creates a file
     #[command(name = "--create")]
     Create {
@@ -34,16 +30,19 @@ enum Commands {
         path: PathBuf,
     },
 
+    // Inserts LaTeX code for a file
     #[command(name = "--insert")]
     Insert {
         path: PathBuf
     },
 
+    // Edits a file
     #[command(name = "--edit")]
     Edit {
         path: PathBuf
     },
 
+    // Starts [kills] the daemon
     #[command(name = "--daemon")]
     Daemon {
         option: String,
@@ -54,18 +53,14 @@ fn main() {
     let cli = Cli::parse();
 
     match cli.command {
-        Commands::Watch => {
-            println!("Watching...");
-        }
         Commands::Create { title, path } => {
-            println!("Creating...");
             create(title, path);
         }
         Commands::Insert { path } => {
             println!("{}", insert(path));
         }
         Commands::Edit { path } => {
-            println!("{}", edit(path));
+            edit(path);
         }
         Commands::Daemon { option }=> {
             match option.as_str() {
@@ -73,11 +68,7 @@ fn main() {
                     daemon::daemon::kill_daemon()
                 }
                 _ => {
-                    std::process::Command::new(std::env::current_exe().unwrap())
-                        .arg("--daemon start")
-                        .spawn()
-                        .expect("Could not start daemon");
-                    println!("Daemon started");
+                    daemon::daemon::start_daemon()
                 }
             }
         }

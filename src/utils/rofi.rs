@@ -8,7 +8,7 @@ pub mod rofi {
         let mut child = Command::new("rofi")
             .arg("-dmenu")
             .arg("-p")
-            .arg("Select the image to edit:")
+            .arg("Select the image to open")
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .spawn()

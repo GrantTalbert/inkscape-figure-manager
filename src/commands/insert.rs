@@ -6,7 +6,6 @@ pub fn insert(directory: PathBuf) -> String {
     let files = parse_dir_for_extension("pdf_tex", &directory);
 
     if files.is_empty() {
-        println!("No files to insert!");
         return String::new();
     }
 
@@ -14,7 +13,6 @@ pub fn insert(directory: PathBuf) -> String {
 
     let selected_file = rofi(&file_names);
     if selected_file.is_empty() {
-        println!("No files to insert!");
         return String::new();
     }
 
