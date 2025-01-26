@@ -20,7 +20,6 @@ pub fn start_daemon() {
 
     if !Path::new(IPC_FILE).exists() {
         File::create(IPC_FILE).expect("Failed to create IPC socket");
-        println!("IPC socket created");
     }
 
     let mut watcher = RecommendedWatcher::new(move |res: Result<Event, notify::Error>| match res {
@@ -39,7 +38,6 @@ pub fn start_daemon() {
                 // this logic implements a debounce time; it returns if it doesn't detect 2 events in short succession
                 if let Some(last_update) = last_update {
                     if now.duration_since(last_update) > DEBOUNCE_DURATION {
-                        println!("Debounce of {:?}", path);
                         return;
                     }
                 }
@@ -49,15 +47,9 @@ pub fn start_daemon() {
                 if first_events.contains(path) {
                     first_events.remove(path);
                     last_events.insert(path.clone());
-                    println!("Ignoring first non-debounced event: {:?}", path);
                     return;
                 }
 
-                //if last_events.contains(path) {
-                //    return;
-                //}
-
-                println!("Non-debounced event detected: {:?}, now processing", path);
 
                 if let Some(filename) = path.file_stem() {
                     let output_filename = path.with_file_name(filename);
@@ -80,25 +72,18 @@ pub fn start_daemon() {
                             close_inkscape();
                             std::thread::sleep(Duration::from_secs(1));
                         }
-                        Ok(status) => {
-                           println!("Failed with status: {}", status);
-                        }
-                        Err(error) => {
-                            eprintln!("failed with error: {}", error);
-                        }
+                        Ok(status) => {}
+                        Err(error) => {}
                     }
                     return;
                 }
             }
         }
-        Err(error) => {
-            eprintln!("watch error: {:?}", error);
-        }
+        Err(error) => {}
     }, notify::Config::default()
     )
         .expect("Failed to create watcher");
 
-    println!("Daemon started successfully!");
 
     loop {
         if let Ok(mut file) = OpenOptions::new().read(true).write(true).open(IPC_FILE) {
@@ -122,29 +107,19 @@ pub fn start_daemon() {
             if status == "kill" {
                 watched_files.remove(&path);
                 watcher.unwatch(&path).expect("failed to unwatch");
-                println!("KILLED");
             } else if watched_files.insert(path.clone()) {
                 watcher
                     .watch(&path, RecursiveMode::NonRecursive)
                     .expect("Failed to watch file");
-                println!("Now watching file {:?}", path);
                 first_events.lock().unwrap().insert(path);
-            } else {
-                println!("Already watching {:?}", path);
             }
 
             file.set_len(0).expect("Failed to truncate the IPC file");
-        } else {
-            println!("Daemon stopped successfully!");
-            break;
-        }
+        } else { break; }
     }
 }
 
 pub fn kill_daemon() {
     if std::fs::remove_file(IPC_FILE).is_ok() {
-        println!("Daemon killed");
-    } else {
-        eprintln!("Daemon IPC not found");
     }
 }

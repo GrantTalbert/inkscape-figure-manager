@@ -4,7 +4,14 @@ use std::fs::OpenOptions;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 use std::process::{Command};
+use std::ptr::read;
 use dirs::home_dir;
+use crate::commands::create::create;
+
+pub fn get_config_dir() -> PathBuf {
+    let home = home_dir().expect("Failed to get your home directory");
+    home.join(".config").join("inkscape-figure-manager")
+}
 
 /// Returns the template file
 /// The template file is saved at ~/.config/inkscape-figure-manager/template.svg
@@ -73,10 +80,4 @@ pub fn close_inkscape() {
         .arg("-e")
         .arg("inkscape")
         .status();
-
-    match output {
-        Ok(status) if status.success() => println!("Successfully closed inkscape file"),
-        Ok(_) => println!("No inkscape processes found"),
-        Err(err) => eprintln!("Failed to close inkscape file: {}", err),
-    }
 }
