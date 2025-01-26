@@ -27,9 +27,10 @@ pub fn get_template_file() -> PathBuf {
 /// Returns the LaTeX code for inserting the figure
 pub fn get_latex_code(selected_file: &str) -> String {
     ["\\begin{figure}[ht]",
-        "    \\centering",
         format!("    \\incfig{{{}}}", selected_file).as_str(),
+        "    \\centering",
         format!("    \\caption{{{}}}\\label{{fig:{}}}", selected_file, selected_file).as_str(),
+        "    \\centering",
         "\\end{figure}"
     ].join("\n")
 }
